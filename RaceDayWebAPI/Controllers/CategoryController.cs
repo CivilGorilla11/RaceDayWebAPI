@@ -50,7 +50,7 @@ namespace RaceDayWebAPI.Controllers
             return CreatedAtAction(nameof(GetCategoriesForEvent), new { eventId = eventId }, ToResponse(category));
         }
 
-        [HttpPut("api/events/categories/{categoryId:int}")]
+        [HttpPut("api/events/categories/{categoryId:int}")] 
         [Authorize(Roles = "Organiser")]
         public async Task<ActionResult<CategoryDtos.CategoryResponse>> UpdateCategory(int categoryId, CategoryDtos.UpdateCategoryRequest request)
         {
