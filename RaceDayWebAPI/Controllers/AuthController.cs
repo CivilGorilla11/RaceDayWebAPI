@@ -10,10 +10,10 @@ using Org.BouncyCastle.Crypto.Fpe;
 
 namespace RaceDayWebAPI.Controllers
 {
-    [Route("api/auth")]
+    [Route("api/auth")] 
     [ApiController]
     public class AuthController(RaceDayDbContext context, TokenService tokenService) : ControllerBase
-    {
+    { 
 
         [HttpPost("register/participant")]
         public async Task<ActionResult<AuthDtos.AuthResponse>> RegisterParticipant(AuthDtos.RegisterRequest request)
