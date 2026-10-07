@@ -39,7 +39,7 @@ namespace RaceDayWebAPI.Controllers
             return Ok(new  AuthDtos.AuthResponse(participant.ParticipantID, "Participant", token));
         }
 
-        [HttpPost("login")]
+        [HttpPost("login")] 
         public async Task<ActionResult<AuthDtos.AuthResponse>> Login(AuthDtos.LoginRequest request)
         {
             var participant = await context.Participants.FirstOrDefaultAsync(p => p.Email == request.Email);
