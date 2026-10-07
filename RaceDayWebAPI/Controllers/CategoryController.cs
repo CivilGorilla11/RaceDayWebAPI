@@ -12,7 +12,7 @@ namespace RaceDayWebAPI.Controllers
 {
     [Route("api/[controller]")] 
     [ApiController]
-    public class CategoryController (RaceDayDbContext context) : ControllerBase
+    public class CategoryController (RaceDayDbContext context) : ControllerBase 
     {
         private static CategoryDtos.CategoryResponse ToResponse(Category c) =>
             new(c.CategoryID, c.EventID, c.CategoryName, c.Distance, c.EntryFee, c.MaxParticipants);
