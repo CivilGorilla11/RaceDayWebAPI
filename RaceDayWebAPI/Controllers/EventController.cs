@@ -44,7 +44,7 @@ namespace RaceDayWebAPI.Controllers
             var events = await query.ToListAsync();
             return Ok(events.Select(ToResponse));
         }
-        [HttpGet("organiser/ me ")]
+        [HttpGet("organiser/me")]
         [Authorize(Roles = "Organiser")]
         public async Task<ActionResult<IEnumerable<EventResponse>>> GetMyEvents()
         {
@@ -102,7 +102,10 @@ namespace RaceDayWebAPI.Controllers
             {
                 ev.EventName = request.EventName;
             }
-            ev.EventDate = request.EventDate;
+            if (request.EventDate.HasValue)
+            {
+                ev.EventDate = request.EventDate.Value;
+            }
             if (!string.IsNullOrEmpty(request.EventAddress))
             {
                 ev.EventAddress = request.EventAddress;

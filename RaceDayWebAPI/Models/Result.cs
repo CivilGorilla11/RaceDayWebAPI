@@ -8,7 +8,7 @@
 
         public TimeOnly FinishTime { get; set; }
 
-        public int Position { get; set; }
+        public int? Position { get; set; }
 
         public string Race { get; set; }
 

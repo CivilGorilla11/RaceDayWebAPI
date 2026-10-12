@@ -37,7 +37,7 @@ namespace RaceDayWebAPI.Controllers
             {
                 EnrollmentID = request.EnrollmentID,
                 FinishTime = request.FinishTime,
-                Position = (int)request.Position,
+                Position = (int?)request.Position ,
                 Race = request.Race,
             };
 
@@ -100,7 +100,8 @@ namespace RaceDayWebAPI.Controllers
         }
 
         // GET /api/events/{eventId}/results
-        [HttpGet("api/events/{eventId:int}/results")]
+        [Route("api/events/{eventId:int}/results")]
+        [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<UpdateResultResponse>>> GetForEvent(int eventId)
         {

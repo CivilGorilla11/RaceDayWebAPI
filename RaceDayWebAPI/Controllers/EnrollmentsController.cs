@@ -13,7 +13,7 @@ namespace RaceDayWebAPI.Controllers
     [ApiController]
     public class EnrollmentsController : ControllerBase
     {
-        private readonly RaceDayDbContext _context;
+        private readonly RaceDayDbContext _context; 
 
         public EnrollmentsController(RaceDayDbContext context) => _context = context;
         private static EnrollmentResponse ToResponse(Enrollment en) =>
@@ -38,6 +38,7 @@ namespace RaceDayWebAPI.Controllers
                 return Conflict("Already enrolled in this category");
             }
 
+
             int currentCount = await _context.Enrollments
                 .CountAsync(en => en.CategoryID == request.CategoryID);
             if (currentCount >= category.MaxParticipants)
@@ -57,10 +58,11 @@ namespace RaceDayWebAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetMine), null, ToResponse(enrollment));
+
         }
 
         
-        [HttpGet]
+        [HttpGet("api/enrollments")]
         [Authorize(Roles = "Participant")]
         public async Task<ActionResult<IEnumerable<EnrollmentResponse>>> GetMine()
         {
@@ -70,8 +72,8 @@ namespace RaceDayWebAPI.Controllers
             return Ok(enrollments.Select(ToResponse));
         }
 
-        [HttpDelete("api/enrollments/{enrollmentId int}")]
-        [Authorize(Roles = "Participants")]
+        [HttpDelete("api/enrollments/{enrollmentId:int}")]
+        [Authorize(Roles = "Participant")]
         public async Task<ActionResult> Withdraw(int enrollmentId)
         {
             var enrollment = await _context.Enrollments.FindAsync(enrollmentId);
@@ -86,7 +88,7 @@ namespace RaceDayWebAPI.Controllers
             }
 
             _context.Enrollments.Remove(enrollment);
-            _context.SaveChangesAsync();
+           await _context.SaveChangesAsync();
             return NoContent();
 
         }

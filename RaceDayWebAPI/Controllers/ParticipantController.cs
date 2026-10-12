@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RaceDayWebAPI.Data;
 using RaceDayWebAPI.DTOs;
 using RaceDayWebAPI.Models;
+using RaceDayWebAPI.Services;
 
 namespace RaceDayWebAPI.Controllers
 {
@@ -22,7 +23,7 @@ namespace RaceDayWebAPI.Controllers
         [HttpGet("me")]
         public async Task<ActionResult<UserDtos.ParticipantProfileResponse>> GetMe()
         {
-            var participant = await _context.Participants.FindAsync(int.Parse(User.FindFirst("id")?.Value ?? "0"));
+            var participant = await _context.Participants.FindAsync(User.GetUserId());
             if (participant == null)
             {
                 return NotFound();
@@ -38,8 +39,8 @@ namespace RaceDayWebAPI.Controllers
         [HttpPut("me")]
         public async Task<ActionResult<UserDtos.ParticipantProfileResponse>> UpdateMe(UserDtos.UpdateProfileRequest request)
         {
-            var participant = await _context.Participants.FindAsync(int.Parse(User.FindFirst("id")?.Value ?? "0"));
-            if (participant == null)
+            var participant = await _context.Participants.FindAsync(User.GetUserId());
+            if (participant == null) 
             {
                 return NotFound();
             }

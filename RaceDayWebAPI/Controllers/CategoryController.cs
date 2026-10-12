@@ -16,8 +16,8 @@ namespace RaceDayWebAPI.Controllers
     {
         private static CategoryDtos.CategoryResponse ToResponse(Category c) =>
             new(c.CategoryID, c.EventID, c.CategoryName, c.Distance, c.EntryFee, c.MaxParticipants);
-
-        [HttpGet("api/events/{eventId:int}/categories")]
+        [Route("api/events/{eventId:int}/categories")]
+        [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<CategoryDtos.CategoryResponse>>> GetCategoriesForEvent(int eventId)
         {

@@ -6,6 +6,7 @@ using RaceDayWebAPI.DTOs;
 using BCrypt.Net;   
 using Microsoft.EntityFrameworkCore;
 using RaceDayWebAPI.Models;
+using RaceDayWebAPI.Services;
 
 namespace RaceDayWebAPI.Controllers
 {
@@ -17,7 +18,7 @@ namespace RaceDayWebAPI.Controllers
         [HttpGet("me")]
         public async Task<ActionResult<UserDtos.OrganiserProfileResponse>> GetMe()
         {
-            var organiser = await context.Organisers.FindAsync(int.Parse(User.FindFirst("id")?.Value ?? "0"));
+            var organiser = await context.Organisers.FindAsync(User.GetUserId() );
 
             if (organiser == null)
             {
@@ -28,14 +29,16 @@ namespace RaceDayWebAPI.Controllers
 
                 OrganiserID = organiser.OrganiserID,
                 Name = organiser.Name,
-                Email = organiser.Email
+                Email = organiser.Email,
+                Password = organiser.Password,
+                Events = organiser.Events
             });
         }
 
         [HttpPut("me")]
         public async Task<ActionResult<UserDtos.OrganiserProfileResponse>>UpdateMe(UserDtos.UpdateProfileRequest request)
         {
-            var organiser = await context.Organisers.FindAsync(int.Parse(User.FindFirst("id")?.Value ?? "0"));
+            var organiser = await context.Organisers.FindAsync(User.GetUserId());
             if (organiser == null)
             {
                 return NotFound();
@@ -57,7 +60,9 @@ namespace RaceDayWebAPI.Controllers
             {
                 OrganiserID = organiser.OrganiserID,
                 Name = organiser.Name,
-                Email = organiser.Email
+                Email = organiser.Email,
+                Password = organiser.Password,
+                Events = organiser.Events
             });
         }
 
