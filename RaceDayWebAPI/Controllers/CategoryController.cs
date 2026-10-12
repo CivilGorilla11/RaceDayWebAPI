@@ -10,9 +10,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace RaceDayWebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] 
     [ApiController]
-    public class CategoryController (RaceDayDbContext context) : ControllerBase
+    public class CategoryController (RaceDayDbContext context) : ControllerBase 
     {
         private static CategoryDtos.CategoryResponse ToResponse(Category c) =>
             new(c.CategoryID, c.EventID, c.CategoryName, c.Distance, c.EntryFee, c.MaxParticipants);
@@ -50,7 +50,7 @@ namespace RaceDayWebAPI.Controllers
             return CreatedAtAction(nameof(GetCategoriesForEvent), new { eventId = eventId }, ToResponse(category));
         }
 
-        [HttpPut("api/events/categories/{categoryId:int}")]
+        [HttpPut("api/events/categories/{categoryId:int}")] 
         [Authorize(Roles = "Organiser")]
         public async Task<ActionResult<CategoryDtos.CategoryResponse>> UpdateCategory(int categoryId, CategoryDtos.UpdateCategoryRequest request)
         {

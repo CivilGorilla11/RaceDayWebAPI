@@ -2,7 +2,7 @@
 {
     public class Category
     {
-        public int CategoryID { get; set; }
+        public int CategoryID { get; set; } 
 
         public int EventID { get; set; }
 

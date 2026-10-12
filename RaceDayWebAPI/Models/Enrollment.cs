@@ -2,7 +2,7 @@
 {
     public class Enrollment
     {
-        public int EnrollmentID { get; set; }
+        public int EnrollmentID { get; set; } 
 
         public int ParticipantID { get; set; }
 
