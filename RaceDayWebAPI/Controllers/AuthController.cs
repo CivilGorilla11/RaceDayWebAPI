@@ -36,7 +36,7 @@ namespace RaceDayWebAPI.Controllers
             var token = tokenService.CreateToken(participant.ParticipantID, participant.Email, "Participant");
 
             var response = new AuthDtos.AuthResponse(participant.ParticipantID, "Participant", token);
-            return Ok(new  AuthDtos.AuthResponse(participant.ParticipantID, "Participant", token));
+            return Ok(new AuthDtos.AuthResponse(participant.ParticipantID, "Participant", token));
         }
 
         [HttpPost("login")]
@@ -56,6 +56,10 @@ namespace RaceDayWebAPI.Controllers
             }
             return Unauthorized("Invalid email or password.");
         }
+        
+
+
+
     }
 }
             
