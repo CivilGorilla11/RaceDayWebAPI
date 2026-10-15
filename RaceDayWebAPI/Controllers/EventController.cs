@@ -13,14 +13,18 @@ namespace RaceDayWebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class EventController(RaceDayDbContext context) : ControllerBase
+    public class EventController : ControllerBase
     {
+        private readonly RaceDayDbContext context;
+
         public static EventResponse ToResponse(Event e) =>
 
         new(e.EventID, e.OrganiserID, e.EventName, e.EventDate, e.EventAddress, e.Description);
 
-
-
+        public EventController(RaceDayDbContext context)
+        {
+            this.context = context;
+        }
 
         [HttpGet]
         [AllowAnonymous]
@@ -34,7 +38,7 @@ namespace RaceDayWebAPI.Controllers
             }
             if (!string.IsNullOrEmpty(location))
             {
-                query = query.Where(e => e.EventAddress.Contains(location));
+                query = query.Where(e => e.EventAddress != null && e.EventAddress.Contains(location));
             }
             if (date.HasValue)
             {

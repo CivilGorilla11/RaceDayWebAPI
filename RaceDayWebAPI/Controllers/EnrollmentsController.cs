@@ -19,7 +19,7 @@ namespace RaceDayWebAPI.Controllers
         private static EnrollmentResponse ToResponse(Enrollment en) =>
             new(en.EnrollmentID, en.ParticipantID, en.CategoryID, en.EnrollmentDate, en.Status);
 
-        [HttpPost("api/enrollments")]
+        [HttpPost("enrollments")]
         [Authorize(Roles = "Participant")]
         public async Task<ActionResult<EnrollmentResponse>> Create(CreateEnrollmentRequest request)
         {
@@ -62,7 +62,7 @@ namespace RaceDayWebAPI.Controllers
         }
 
         
-        [HttpGet("api/enrollments")]
+        [HttpGet("enrollments")]
         [Authorize(Roles = "Participant")]
         public async Task<ActionResult<IEnumerable<EnrollmentResponse>>> GetMine()
         {

@@ -12,13 +12,21 @@ namespace RaceDayWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ResultsController(RaceDayDbContext context) : ControllerBase
+    public class ResultsController : ControllerBase
     {
-        private static readonly string[] ValidRaceStatuses = ["Finished", "DNF", "DQ"];
+        private readonly RaceDayDbContext context;
+        private static readonly string [] ValidRaceStatuses = new[] { "Finished", "DNF", "DQ" };
 
-        private static UpdateResultResponse ToResponse(Result r) =>
-            new(r.ResultID, r.EnrollmentID, r.FinishTime, r.Position, r.Race);
+        public ResultsController(RaceDayDbContext context)
+        {
+            this.context = context;
+        }
 
+        private static UpdateResultResponse ToResponse(Result r)
+        {
+            return new(r.ResultID, r.EnrollmentID, r.FinishTime, r.Position, r.Race);
+        }
+         
         // POST /api/results
         [HttpPost("api/results")]
         [Authorize(Roles = "Organiser")]

@@ -5,15 +5,21 @@ using RaceDayWebAPI.Data;
 using RaceDayWebAPI.DTOs;   
 using RaceDayWebAPI.Models;
 using RaceDayWebAPI.Services;
-using Org.BouncyCastle.Crypto.Fpe;
-
 
 namespace RaceDayWebAPI.Controllers
 {
     [Route("api/auth")] 
     [ApiController]
-    public class AuthController(RaceDayDbContext context, TokenService tokenService) : ControllerBase
+    public class AuthController : ControllerBase
     { 
+        private readonly RaceDayDbContext context;  
+        private readonly TokenService tokenService;
+
+        public AuthController(RaceDayDbContext context, TokenService tokenService)
+        {
+            this.context = context;
+            this.tokenService = tokenService;
+        }
 
         [HttpPost("register/participant")]
         public async Task<ActionResult<AuthDtos.AuthResponse>> RegisterParticipant(AuthDtos.RegisterRequest request)
@@ -23,19 +29,17 @@ namespace RaceDayWebAPI.Controllers
                 return BadRequest("Email is already registered.");
             }
 
-            var participant = new Participants
+            var participant = new Participant
             {
                 Name = request.Name,
                 Email = request.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
-
             };
             context.Participants.Add(participant);
             await context.SaveChangesAsync();
 
             var token = tokenService.CreateToken(participant.ParticipantID, participant.Email, "Participant");
 
-            var response = new AuthDtos.AuthResponse(participant.ParticipantID, "Participant", token);
             return Ok(new AuthDtos.AuthResponse(participant.ParticipantID, "Participant", token));
         } 
 
@@ -46,9 +50,9 @@ namespace RaceDayWebAPI.Controllers
             if (participant != null && BCrypt.Net.BCrypt.Verify(request.Password, participant.Password))
             {
                 var token = tokenService.CreateToken(participant.ParticipantID, participant.Email, "Participant");
-                return Ok(new AuthDtos.AuthResponse(participant.ParticipantID, "Participant", token));
+                return Ok(new AuthDtos.AuthResponse(participant.ParticipantID, "Participant", token)); 
             }
-            var organiser = await context.Organisers.FirstOrDefaultAsync(o => o.Email == request.Email);
+            var organiser = await context.Organisers.FirstOrDefaultAsync(o => o.Email == request.Email); 
             if (organiser != null && BCrypt.Net.BCrypt.Verify(request.Password, organiser.Password))
             {
                 var token = tokenService.CreateToken(organiser.OrganiserID, organiser.Email, "Organiser");
@@ -56,12 +60,7 @@ namespace RaceDayWebAPI.Controllers
             }
             return Unauthorized("Invalid email or password.");
         }
-        
-
-
-
     }
 }
-            
 
 

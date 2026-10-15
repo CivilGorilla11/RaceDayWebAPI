@@ -22,10 +22,13 @@ namespace RaceDayWebAPI.Controllers
 
         // POST api/category/{categoryId}/routes
         [HttpPost]
-        public async Task<ActionResult<RouteResponse>> Create(int categoryId, CreateRouteRequest request )
+        public async Task<ActionResult<RouteResponse>> Create(int categoryId, CreateRouteRequest request)
         {
+            if (string.IsNullOrWhiteSpace(request.RouteName))
+                return BadRequest("RouteName is required.");
+
             var category = await _context.Categories.Include(c => c.Event)
-            .FirstOrDefaultAsync(c => c.CategoryID == categoryId);
+                .FirstOrDefaultAsync(c => c.CategoryID == categoryId);
             if (category is null) return NotFound("Category not found.");
             if (category.Event!.OrganiserID != User.GetUserId()) return Forbid();
 
@@ -33,7 +36,7 @@ namespace RaceDayWebAPI.Controllers
             {
                 CategoryID = categoryId,
                 RouteName = request.RouteName,
-                ElevationGain = (decimal)request.ElevationGain,
+                ElevationGain = request.ElevationGain,
                 MapLink = request.MapLink,
             };
 
@@ -43,7 +46,5 @@ namespace RaceDayWebAPI.Controllers
             var response = new RouteResponse(route.RouteID, route.CategoryID, route.RouteName, route.ElevationGain, route.MapLink);
             return CreatedAtAction(nameof(Create), new { categoryId }, response);
         }
-
-
     }
 }

@@ -1,21 +1,50 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RaceDayWebAPI.Data;
 using RaceDayWebAPI.DTOs;
-using RaceDayWebAPI.Models; 
-using Microsoft.EntityFrameworkCore;
+using RaceDayWebAPI.Models;
 using RaceDayWebAPI.Services;
-using Microsoft.AspNetCore.Authorization;
-
 
 namespace RaceDayWebAPI.Controllers
 {
-    [Route("api/[controller]")] 
+    [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController (RaceDayDbContext context) : ControllerBase 
+    public class CategoryController : ControllerBase
     {
+        private readonly RaceDayDbContext context;
+        public CategoryController(RaceDayDbContext context)
+        {
+            this.context = context;
+        }
+
         private static CategoryDtos.CategoryResponse ToResponse(Category c) =>
             new(c.CategoryID, c.EventID, c.CategoryName, c.Distance, c.EntryFee, c.MaxParticipants);
+
+        [HttpDelete("api/events/categories/{categoryId:int}")]
+        [Authorize(Roles = "Organiser")]
+        public async Task<IActionResult> DeleteCategory(int categoryId)
+        {
+            var organiserId = User.GetUserId();
+
+            // Load category including its Event in one query
+            var category = await context.Categories
+                .Include(c => c.Event)           // ensure Event navigation is loaded
+                .FirstOrDefaultAsync(c => c.CategoryID == categoryId);
+
+            if (category == null || category.Event == null || category.Event.OrganiserID != organiserId)
+            {
+                return NotFound("Category not found or you are not the organiser of this event.");
+            }
+
+            context.Categories.Remove(category);
+            await context.SaveChangesAsync();
+            return NoContent();
+        }
+
         [Route("api/events/{eventId:int}/categories")]
         [HttpGet]
         [AllowAnonymous]
@@ -55,13 +84,17 @@ namespace RaceDayWebAPI.Controllers
         public async Task<ActionResult<CategoryDtos.CategoryResponse>> UpdateCategory(int categoryId, CategoryDtos.UpdateCategoryRequest request)
         {
             var organiserId = User.GetUserId();
+
+            // Load category including its Event first, then validate organiser.
             var category = await context.Categories
                 .Include(c => c.Event)
-                .FirstOrDefaultAsync(c => c.CategoryID == categoryId && c.Event.OrganiserID == organiserId);
-            if (category == null)
+                .FirstOrDefaultAsync(c => c.CategoryID == categoryId);
+
+            if (category == null || category.Event == null || category.Event.OrganiserID != organiserId)
             {
                 return NotFound("Category not found or you are not the organiser of this event.");
             }
+
             if (!string.IsNullOrEmpty(request.CategoryName))
             {
                 category.CategoryName = request.CategoryName;
@@ -80,22 +113,6 @@ namespace RaceDayWebAPI.Controllers
             }
             await context.SaveChangesAsync();
             return Ok(ToResponse(category));
-        }
-        [HttpDelete("api/events/categories/{categoryId:int}")]
-        [Authorize(Roles = "Organiser")]
-        public async Task<IActionResult> DeleteCategory(int categoryId)
-        {
-            var organiserId = User.GetUserId();
-            var category = await context.Categories
-                .Include(c => c.Event)
-                .FirstOrDefaultAsync(c => c.CategoryID == categoryId && c.Event.OrganiserID == organiserId);
-            if (category == null)
-            {
-                return NotFound("Category not found or you are not the organiser of this event.");
-            }
-            context.Categories.Remove(category);
-            await context.SaveChangesAsync();
-            return NoContent();
         }
     }
 }

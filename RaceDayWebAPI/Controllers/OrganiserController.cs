@@ -13,8 +13,13 @@ namespace RaceDayWebAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "Organiser")]
-    public class OrganiserController(RaceDayDbContext context) : ControllerBase
+    public class OrganiserController : ControllerBase
     {
+        private readonly RaceDayDbContext context;
+        public OrganiserController(RaceDayDbContext context)
+        {
+            this.context = context;
+        }
         [HttpGet("me")]
         public async Task<ActionResult<UserDtos.OrganiserProfileResponse>> GetMe()
         {
@@ -24,19 +29,14 @@ namespace RaceDayWebAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok(new Organiser
-            { 
-
-                OrganiserID = organiser.OrganiserID,
-                Name = organiser.Name,
-                Email = organiser.Email,
-                Password = organiser.Password,
-                Events = organiser.Events
-            });
+            return Ok(new UserDtos.OrganiserProfileResponse(
+                organiser.OrganiserID,
+                organiser.Name,
+                organiser.Email));
         }
 
         [HttpPut("me")]
-        public async Task<ActionResult<UserDtos.OrganiserProfileResponse>>UpdateMe(UserDtos.UpdateProfileRequest request)
+        public async Task<ActionResult<UserDtos.OrganiserProfileResponse>> UpdateMe(UserDtos.UpdateProfileRequest request)
         {
             var organiser = await context.Organisers.FindAsync(User.GetUserId());
             if (organiser == null)
@@ -56,17 +56,11 @@ namespace RaceDayWebAPI.Controllers
                 organiser.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
             }
             await context.SaveChangesAsync();
-            return Ok(new Organiser
-            {
-                OrganiserID = organiser.OrganiserID,
-                Name = organiser.Name,
-                Email = organiser.Email,
-                Password = organiser.Password,
-                Events = organiser.Events
-            });
+
+            return Ok(new UserDtos.OrganiserProfileResponse(
+                organiser.OrganiserID,
+                organiser.Name,
+                organiser.Email));
         }
-
-
-
     }
 }

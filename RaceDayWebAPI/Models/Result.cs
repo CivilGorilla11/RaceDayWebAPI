@@ -10,7 +10,7 @@
 
         public int? Position { get; set; }
 
-        public string Race { get; set; }
+        public string Race { get; set; } = string.Empty;
 
         public Enrollment ? Enrollment { get; set; }
     }

@@ -28,12 +28,10 @@ namespace RaceDayWebAPI.Controllers
             {
                 return NotFound();
             }
-            return Ok(new Participants 
-            {
-                ParticipantID = participant.ParticipantID,
-                Name = participant.Name,
-                Email = participant.Email
-            });
+            return Ok(new UserDtos.ParticipantProfileResponse(
+                participant.ParticipantID,
+                participant.Name,
+                participant.Email));
         }
 
         [HttpPut("me")]
@@ -57,12 +55,11 @@ namespace RaceDayWebAPI.Controllers
                 participant.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
             }
             await _context.SaveChangesAsync();
-            return Ok(new Participants
-            {
-                ParticipantID = participant.ParticipantID,
-                Name = participant.Name,
-                Email = participant.Email
-            });
+
+            return Ok(new UserDtos.ParticipantProfileResponse(
+                participant.ParticipantID,
+                participant.Name,
+                participant.Email));
         }   
     }
 }

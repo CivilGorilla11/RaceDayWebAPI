@@ -19,9 +19,12 @@ namespace RacedayAPI.Tests
         private static RaceDayDbContext CreateContext(string dbName)
         {
             var options = new DbContextOptionsBuilder<RaceDayDbContext>()
-                .UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={dbName};Trusted_Connection=True;")
+                .UseInMemoryDatabase(dbName + "-" + Guid.NewGuid().ToString("N"))
                 .Options;
-            return new RaceDayDbContext(options);
+
+            var ctx = new RaceDayDbContext(options);
+            ctx.Database.EnsureCreated();
+            return ctx;
         }
 
         private static ClaimsPrincipal GetUserPrincipal(int id, string role)

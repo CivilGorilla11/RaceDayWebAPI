@@ -1,15 +1,22 @@
-﻿namespace RaceDayWebAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace RaceDayWebAPI.Models
 {
-    public class Participants
+    public class Participant
     {
-        public int ParticipantID { get; set; } 
+        public int ParticipantID { get; set; } = 0;
 
-        public string Name { get; set; }
+        //[Required]
+        public string Name { get; set; } = string.Empty;
 
+       /// <summary>
+       /// [Required]
+       /// </summary>
         public string Email { get; set; } = string.Empty;
 
-        public string Password { get; set; } = string.Empty;
+       /// <summary>
+        public string? Password { get; set; } = null;
 
-        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();  
     }
 }
