@@ -17,7 +17,7 @@ namespace RacedayAPI.Tests
         private static RaceDayDbContext CreateContext(string dbName)
         {
             var options = new DbContextOptionsBuilder<RaceDayDbContext>()
-                .UseInMemoryDatabase(dbName)
+                .UseInMemoryDatabase(dbName) 
                 .Options;
             return new RaceDayDbContext(options);
         }
